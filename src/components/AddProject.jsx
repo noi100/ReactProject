@@ -2,59 +2,90 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Dialog, AppBar, Toolbar, IconButton, Typography, Slide, TextField, Stack, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { setProject } from '../Store/projectSlice';
+import { setProject, updateProject } from '../Store/projectSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddProject({ open, onClose, onAddProject }) {
-    const currentUser = useSelector(state => state.user.currentUser);
-    // הגדרת react-hook-form
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+export default function AddProject({ open: propOpen, onClose, onAddProject }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const currentUser = useSelector(state => state.user.currentUser);
+
+    // תיקון השגיאה: בודק אם הדיאלוג פתוח דרך פרופס או כי אנחנו בנתיב הניווט
+    const isOpen = propOpen || location.pathname === '/AddProject';
+
+    // שליפת הפרויקט מה-state של הניווט
+    const projectToEdit = location.state?.projectToEdit;
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        values: projectToEdit ? {
+            name: projectToEdit.name,
+            description: projectToEdit.description
+        } : { name: '', description: '' }
+    });
+
+    const handleInternalClose = () => {
+        if (onClose) {
+            onClose();
+        } else {
+            navigate('/projects'); // חוזר לרשימה אם הגענו דרך ניווט
+        }
+    };
 
     const onSubmit = (data) => {
-        // יצירת אובייקט פרויקט חדש לפי הדרישות
-        const newProject = {
-            userId: currentUser.id,
-            id: new Date().getTime(),
-            name: data.name,
-            description: data.description,
-            createdAt: new Date().toLocaleDateString(),
-            tasks: [] ,// מערך משימות ריק להתחלה
-        };
-        
-        dispatch(setProject(newProject));
+        if (projectToEdit) {
+            const updatedProject = {
+                ...projectToEdit,
+                name: data.name,
+                description: data.description,
+            };
+            dispatch(updateProject(updatedProject));
+        } else {
+            const newProject = {
+                userId: currentUser?.id,
+                id: new Date().getTime(),
+                name: data.name,
+                description: data.description,
+                createdAt: new Date().toLocaleDateString(),
+                tasks: [],
+            };
+            dispatch(setProject(newProject));
+            if (onAddProject) onAddProject(newProject);
+        }
 
-        console.log("פרויקט חדש נוצר:", newProject);
-        
-        // שליחת הנתונים חזרה לאבא (AllPage) כדי להציג על המסך
-        onAddProject(newProject); 
-        
-        reset(); // איפוס השדות
-        onClose(); // סגירת החלון
+        reset();
+        handleInternalClose();
     };
 
     return (
-        <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
+        <Dialog 
+            fullScreen 
+            open={isOpen} // משתמשים במשתנה המחושב
+            onClose={handleInternalClose} 
+        >
             <AppBar sx={{ position: 'relative', backgroundColor: '#1976d2' }}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={onClose} aria-label="close">
+                    <IconButton edge="start" color="inherit" onClick={handleInternalClose} aria-label="close">
                         <CloseIcon />
                     </IconButton>
                     <Typography sx={{ ml: 2, flex: 1 }} variant="h6">
-                        יצירת פרויקט חדש
+                        {projectToEdit ? "עריכת פרויקט" : "יצירת פרויקט חדש"}
                     </Typography>
                     <Button color="inherit" onClick={handleSubmit(onSubmit)}>
-                        שמור פרויקט
+                        {projectToEdit ? "שמור שינויים" : "שמור פרויקט"}
                     </Button>
                 </Toolbar>
             </AppBar>
 
             <Box sx={{ p: 4, maxWidth: 600, mx: 'auto', mt: 4 }}>
-                <Typography variant="h5" gutterBottom>פרטי הפרויקט</Typography>
+                <Typography variant="h5" gutterBottom>
+                    {projectToEdit ? "עדכון פרטי הפרויקט" : "פרטי הפרויקט"}
+                </Typography>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Stack spacing={3}>
                         <TextField

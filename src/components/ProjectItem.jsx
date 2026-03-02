@@ -1,34 +1,40 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-    Grid, Typography, Paper, Box, Button, 
-    Card, CardContent, Chip, IconButton, Stack, Divider 
+import {
+    Grid, Typography, Paper, Box, Button,
+    Card, CardContent, Chip, IconButton, Stack, Divider
 } from '@mui/material'; // חזרנו לייבוא רגיל ופשוט
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteProject } from '../Store/projectSlice';
+import { updateProject } from '../Store/projectSlice';
 
 
 export default function ProjectItem() {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+   
 
     // הלוגיקה הקיימת שלך לשליפת הפרויקט
     const project = useSelector(state =>
         state.project.allProjects.find(p => p.id === Number(id))
     );
 
-//פונקציית המחיקה
+    //פונקציית המחיקה
     const handleDelete = () => {
         if (window.confirm(`האם את בטוחה שברצונך למחוק את הפרויקט "${project?.name}"?`)) {
-            dispatch(deleteProject(Number(id)));            
+            dispatch(deleteProject(Number(id)));
             // מעבירים את המשתמש חזרה לרשימת הפרויקטים
-            navigate('/projects'); 
+            navigate('/projects');
         }
     };
-
+    //פונקציה לעדכון
+    const handleUpdate = () => {
+        dispatch(updateProject(Number(id)));
+        navigate('/AddProject',{ state: { projectToEdit: project } });
+    }
     if (!project) return <Typography variant="h5" sx={{ p: 5, textAlign: 'center' }}>הפרויקט לא נמצא</Typography>;
 
     // 4 העמודות לפי הדרישות שלך
@@ -49,7 +55,7 @@ export default function ProjectItem() {
                     <Typography variant="body1" color="text.secondary">{project?.description}</Typography>
                 </Box>
                 <Stack direction="row" spacing={1}>
-                    <Button startIcon={<EditIcon />} variant="outlined" color="primary" size="small">ערוך פרויקט</Button>
+                    <Button onClick={handleUpdate} startIcon={<EditIcon />} variant="outlined" color="primary" size="small">ערוך פרויקט</Button>
                     <Button onClick={handleDelete} startIcon={<DeleteIcon />} variant="outlined" color="error" size="small">מחק פרויקט</Button>
                 </Stack>
             </Paper>
