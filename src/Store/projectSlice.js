@@ -18,22 +18,34 @@ const projectSlice = createSlice({
                 state.allProjects[index] = action.payload;
             }
         },
-        // פעולה חדשה והכרחית להוספת משימה!
         addTaskToProject: (state, action) => {
             const { projectId, task } = action.payload;
             const project = state.allProjects.find(p => p.id === Number(projectId));
             if (project) {
                 if (!project.tasks) project.tasks = [];
-                // הוספת משימה עם ID ייחודי (זמני)
                 project.tasks.push({ ...task, id: Date.now() });
+            }
+        },
+        deleteTask: (state, action) => {
+            const { projectId, task } = action.payload;
+            const project = state.allProjects.find(p => p.id === Number(projectId));
+            // התיקון כאן: הוספת סימן שאלה או בדיקה שהמערך קיים
+            if (project && project.tasks) {
+                project.tasks = project.tasks.filter(t => t.id !== task.id);
+            }
+        },
+        updateTask: (state, action) => {
+            const { projectId, task } = action.payload;
+            const project = state.allProjects.find(p => p.id === Number(projectId));
+            if (project && project.tasks) {
+                const index = project.tasks.findIndex(t => t.id === task.id);
+                if (index !== -1) {
+                    project.tasks[index] = task;
+                }
             }
         }
     }
 });
 
-export const { setProject, deleteProject, updateProject, addTaskToProject } = projectSlice.actions;
-
-export const selectProjectById = (state, projectId) => 
-    state.project.allProjects.find(p => p.id === Number(projectId));
-
+export const { setProject, deleteProject, updateProject, addTaskToProject, deleteTask, updateTask } = projectSlice.actions;
 export default projectSlice.reducer;

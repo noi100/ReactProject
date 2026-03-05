@@ -7,6 +7,7 @@ import AllProject from './components/AllPage.jsx';
 import AddProject from './components/AddProject.jsx';
 import { PersistGate } from 'redux-persist/integration/react'; // ייבוא ה-Gate
 import ProjectItem from "./components/ProjectItem";
+import TaskItem from './components/TaskItem.jsx';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path='/AddProject' element={<AddProject/>}/>
             <Route path="/projects" element={<AllProject />} />
             <Route path="/project/:id" element={<ProjectItem />} />
+            <Route path="/TaskItem" element={<TaskItem/>}/>
           </Routes>
         </BrowserRouter>
       </PersistGate>
