@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function AllPage() {
-    const allProjects = useSelector(state => state.project.allProjects);
-    const currentUser = useSelector(state => state.user.currentUser);
+    const allProjects = useSelector(state => state.project.allProjects);//שליפת נתונים מרידאקס
+    const currentUser = useSelector(state => state.user.currentUser);//שליפת נתונים מרידאקס
     const navigateToItemProject = useNavigate();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);//קובע האם הדיאלוג יהיה פתוח או סגור
 
-    const userProjects = allProjects.filter(p => p.userId === currentUser?.id);
+    const userProjects = allProjects.filter(p => p.userId === currentUser?.id);//סינון פרויקטים לפי שם משתשמש
 
     const moveToItem = (id) => {
         navigateToItemProject(`/project/${id}`);
@@ -313,7 +313,7 @@ export default function AllPage() {
 
             <AddProject
                 open={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
+                onClose={() => setIsDialogOpen(false)} 
                 onAddProject={handleAddProject}
             />
         </Box>

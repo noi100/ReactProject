@@ -18,7 +18,7 @@ export default function ProjectItem() {
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
+    //מציאת הפרויקט
     const project = useSelector(state => state.project.allProjects.find(p => p.id === Number(id)));
 
     if (!project) return (
@@ -28,14 +28,14 @@ export default function ProjectItem() {
             </Typography>
         </Box>
     );
-
+    //מערך של מצבי המשימות
     const columns = [
         { title: "לביצוע", status: "ToDo", color: 'rgba(139,148,158,0.06)', accent: '#8b949e', border: 'rgba(139,148,158,0.15)' },
         { title: "בביצוע", status: "InProgress", color: 'rgba(245,158,11,0.06)', accent: '#f59e0b', border: 'rgba(245,158,11,0.2)' },
         { title: "בבדיקה", status: "Testing", color: 'rgba(124,106,247,0.06)', accent: '#7c6af7', border: 'rgba(124,106,247,0.2)' },
         { title: "בוצע", status: "Done", color: 'rgba(0,229,195,0.06)', accent: '#00e5c3', border: 'rgba(0,229,195,0.2)' },
     ];
-
+    //מערך של רמת דחיפות
     const priorityMap = {
         High: { label: 'גבוהה', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)' },
         Medium: { label: 'בינונית', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)' },
@@ -230,6 +230,7 @@ export default function ProjectItem() {
                                 </Box>
 
                                 {/* Tasks */}
+                    {/* מעבר על כל המשימות, עריכת כל מישמה מיונה לפי הסטטוס שלה */}
                                 <Stack spacing={2} sx={{ flex: 1 }}>
                                     {project.tasks?.filter(t => t.status === col.status).map((task, taskIdx) => {
                                         const prio = priorityMap[task.priority] || priorityMap.Medium;
@@ -355,7 +356,7 @@ export default function ProjectItem() {
             <TaskItem
                 open={isTaskModalOpen}
                 onClose={() => setIsTaskModalOpen(false)}
-                taskToEdit={taskToEdit}
+                taskToEdit={taskToEdit}//שליחה לעריכה
             />
 
             {/* Delete Confirmation Dialog */}

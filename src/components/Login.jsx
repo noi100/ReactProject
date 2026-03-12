@@ -10,15 +10,17 @@ export default function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    //פונקציה להתחברות
     const onSubmit = (data) => {
         const userWithId = {
             ...data,
             id: data.password
         };
         dispatch(setLogin(userWithId));
-        navigate('/AllProject');
+        navigate('/AllProject'); //מעבר לדף הפרויקטים
     };
 
+    //אובייקט לעיצוב השדות מילוי
     const inputSx = {
         '& .MuiFilledInput-root': {
             backgroundColor: 'rgba(255,255,255,0.04)',
@@ -138,7 +140,7 @@ export default function Login() {
                                 {...register("userName", { required: "חובה להזין שם משתמש", maxLength: 20 })}
                                 error={!!errors.userName}
                                 helperText={errors.userName?.message}
-                                sx={inputSx}
+                                sx={inputSx} //מוסיפה לכל שדה את העיצוב שיש בפונקציה inputSx
                             />
                             <TextField
                                 fullWidth

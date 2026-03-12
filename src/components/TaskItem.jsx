@@ -18,6 +18,7 @@ export default function TaskItem({ open, onClose, taskToEdit }) {
     const dispatch = useDispatch();
     const [task, setTask] = useState(initialState);
 
+    // הפונקציה בודקת למה הגענו לפה בגלל יצירה חדה שאו בגלל עריכה
     useEffect(() => {
         if (open) {
             if (taskToEdit) {
@@ -28,11 +29,12 @@ export default function TaskItem({ open, onClose, taskToEdit }) {
         }
     }, [open, taskToEdit]);
 
+    //מטפלת בכל שדות הטופס בו זמנית , מחזיקה תוך כדי גם את השגות ששונו וגם את אלו שלא
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTask(prev => ({ ...prev, [name]: value }));
     };
-
+    //עדכון נתונים 
     const handleSubmit = () => {
         if (!task.title) return alert("חובה להזין שם משימה");
         if (taskToEdit) {

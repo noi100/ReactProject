@@ -1,18 +1,17 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { store, persistor } from './Store/store.js'; // הוספנו את persistor
+import { store, persistor } from './Store/store.js'; 
 import Home from './components/Home';
 import Login from './components/Login';
 import { Provider } from 'react-redux';
 import AllProject from './components/AllPage.jsx';
 import AddProject from './components/AddProject.jsx';
-import { PersistGate } from 'redux-persist/integration/react'; // ייבוא ה-Gate
+import { PersistGate } from 'redux-persist/integration/react'; 
 import ProjectItem from "./components/ProjectItem";
 import TaskItem from './components/TaskItem.jsx';
 
 function App() {
   return (
     <Provider store={store}>
-      {/* ה-PersistGate דואג שהאפליקציה לא תטען לפני שהנתונים חזרו מהזיכרון */}
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
           <Routes>

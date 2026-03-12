@@ -15,11 +15,14 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const currentUser = useSelector(state => state.user.currentUser);
+    const currentUser = useSelector(state => state.user.currentUser);//שליפת המשמש שמחובר כרגע
 
+    //פתיחת החלון  או לא 
     const isOpen = propOpen || location.pathname === '/AddProject';
+    //משתנה יכיל את האובייקט אם הגיע בגלל עדכון
     const projectToEdit = location.state?.projectToEdit;
 
+    //דואגת למילוי תקין של הטופס
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         values: projectToEdit ? {
             name: projectToEdit.name,
@@ -35,13 +38,16 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
         }
     };
 
+    //פונקציה שבודקת מדוע הגענו לעמוד זה בגלל עדכון פרויקט או בגלל פתיחת פרויקט ופועלת על פי זה 
     const onSubmit = (data) => {
         if (projectToEdit) {
+            //שומר על נתוני הפרויקט המקורי עד לשינוי
             const updatedProject = {
                 ...projectToEdit,
                 name: data.name,
                 description: data.description,
             };
+            //אם זה עדכון פרויקט
             dispatch(updateProject(updatedProject));
         } else {
             const newProject = {
@@ -52,6 +58,7 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
                 createdAt: new Date().toLocaleDateString(),
                 tasks: [],
             };
+            //אם זה יצירת פרויקט חדש יצירת אובייקט חדש
             dispatch(setProject(newProject));
             if (onAddProject) onAddProject(newProject);
         }
