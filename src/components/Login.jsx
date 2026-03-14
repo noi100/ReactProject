@@ -137,16 +137,23 @@ export default function Login() {
                                 fullWidth
                                 label="שם משתמש"
                                 variant="filled"
-                                {...register("userName", { required: "חובה להזין שם משתמש", maxLength: 20 })}
+                                // הוספת required
+                                {...register("userName", {
+                                    required: "חובה להזין שם משתמש",
+                                    maxLength: 20
+                                })}
                                 error={!!errors.userName}
                                 helperText={errors.userName?.message}
-                                sx={inputSx} //מוסיפה לכל שדה את העיצוב שיש בפונקציה inputSx
+                                sx={inputSx}
                             />
+
                             <TextField
                                 fullWidth
                                 label="מייל"
                                 variant="filled"
                                 {...register("email", {
+                                    // הוספת required
+                                    required: "חובה להזין כתובת מייל",
                                     pattern: {
                                         value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
                                         message: "כתובת מייל לא תקינה"
@@ -156,12 +163,15 @@ export default function Login() {
                                 helperText={errors.email?.message}
                                 sx={inputSx}
                             />
+
                             <TextField
                                 fullWidth
                                 label="סיסמא"
                                 variant="filled"
                                 type="password"
                                 {...register("password", {
+                                    // הוספת required
+                                    required: "חובה להזין סיסמה",
                                     minLength: { value: 6, message: "הסיסמה חייבת להכיל לפחות 6 תווים" }
                                 })}
                                 error={!!errors.password}

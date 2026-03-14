@@ -2,17 +2,18 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import projectReducer from './projectSlice';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/es/storage'; // החלפת lib ב-es
+import storage from 'redux-persist/es/storage';
 import { combineReducers } from 'redux';
 
+// מאחד את כל ה- Slice לאובייקט אחד
 const rootReducer = combineReducers({
-    user: userReducer,
-    project: projectReducer,
+    user: userReducer, // מגיע מ-userSlice
+    project: projectReducer, // מגיע מ-projectSlice
 });
 
 const persistConfig = {
     key: 'root',
-    storage, // כאן הבעיה הייתה, אם הייבוא למעלה לא נכון, זה יהיה undefined
+    storage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
