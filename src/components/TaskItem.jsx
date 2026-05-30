@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, S
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { addTaskToProject, updateTask } from '../Store/projectSlice';
+import { addTaskToProjectAsync, updateTaskAsync } from '../Store/projectSlice';
 
 const initialState = {
     title: '',
@@ -20,13 +20,10 @@ export default function TaskItem({ open, onClose, taskToEdit }) {
 
     // הפונקציה בודקת למה הגענו לפה בגלל יצירה חדה שאו בגלל עריכה
     useEffect(() => {
-        if (open) {
-            if (taskToEdit) {
-                setTask({ ...initialState, ...taskToEdit });
-            } else {
-                setTask(initialState);
-            }
-        }
+        if (!open) return;
+
+        const nextTask = taskToEdit ? { ...initialState, ...taskToEdit } : initialState;
+        Promise.resolve().then(() => setTask(nextTask));
     }, [open, taskToEdit]);
 
     //מטפלת בכל שדות הטופס בו זמנית , מחזיקה תוך כדי גם את השגות ששונו וגם את אלו שלא
@@ -35,14 +32,20 @@ export default function TaskItem({ open, onClose, taskToEdit }) {
         setTask(prev => ({ ...prev, [name]: value }));
     };
     //עדכון נתונים 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!task.title) return alert("חובה להזין שם משימה");
-        if (taskToEdit) {
-            dispatch(updateTask({ projectId: id, task }));
-        } else {
-            dispatch(addTaskToProject({ projectId: id, task }));
+
+        try {
+            if (taskToEdit) {
+                await dispatch(updateTaskAsync({ projectId: id, task })).unwrap();
+            } else {
+                await dispatch(addTaskToProjectAsync({ projectId: id, task })).unwrap();
+            }
+            onClose();
+        } catch (error) {
+            console.error('Failed to save task:', error);
+            alert('שגיאה בשמירת המשימה, נסו שוב.');
         }
-        onClose();
     };
 
     const inputSx = {

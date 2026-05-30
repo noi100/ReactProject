@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Button, Dialog, AppBar, Toolbar, IconButton, Typography, Slide, TextField, Stack, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { setProject, updateProject } from '../Store/projectSlice';
+import { addProjectAsync, updateProject } from '../Store/projectSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -39,7 +39,7 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
     };
 
     //פונקציה שבודקת מדוע הגענו לעמוד זה בגלל עדכון פרויקט או בגלל פתיחת פרויקט ופועלת על פי זה 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (projectToEdit) {
             //שומר על נתוני הפרויקט המקורי עד לשינוי
             const updatedProject = {
@@ -52,15 +52,18 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
         } else {
             const newProject = {
                 userId: currentUser?.id,
-                id: new Date().getTime(),
                 name: data.name,
                 description: data.description,
                 createdAt: new Date().toLocaleDateString(),
                 tasks: [],
             };
-            //אם זה יצירת פרויקט חדש יצירת אובייקט חדש
-            dispatch(setProject(newProject));
-            if (onAddProject) onAddProject(newProject);
+            //אם זה יצירת פרויקט חדש, שולח את הנתונים לשרת
+            try {
+                const savedProject = await dispatch(addProjectAsync(newProject)).unwrap();
+                if (onAddProject) onAddProject(savedProject);
+            } catch (error) {
+                console.error('Failed to add project:', error);
+            }
         }
         reset();
         handleInternalClose();

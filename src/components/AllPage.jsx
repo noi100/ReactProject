@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Grid, Box, Chip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddProject from './AddProject';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchProjectsAsync } from '../Store/projectSlice';
 
 export default function AllPage() {
+    const dispatch = useDispatch();
     const allProjects = useSelector(state => state.project.allProjects);//שליפת נתונים מרידאקס
+    const status = useSelector(state => state.project.status);
+    const error = useSelector(state => state.project.error);
     const currentUser = useSelector(state => state.user.currentUser);//שליפת נתונים מרידאקס
     const navigateToItemProject = useNavigate();
     const [isDialogOpen, setIsDialogOpen] = useState(false);//קובע האם הדיאלוג יהיה פתוח או סגור
+
+    useEffect(() => {
+        dispatch(fetchProjectsAsync());
+    }, [dispatch]);
 
     const userProjects = allProjects.filter(p => p.userId === currentUser?.id);//סינון פרויקטים לפי שם משתשמש
 
@@ -106,6 +114,17 @@ export default function AllPage() {
                     mb: 5,
                     opacity: 0.4,
                 }} />
+
+                {status === 'loading' && (
+                    <Typography sx={{ color: 'var(--accent-primary)', mb: 3 }}>
+                        טוען פרויקטים...
+                    </Typography>
+                )}
+                {status === 'failed' && (
+                    <Typography sx={{ color: '#ef4444', mb: 3 }}>
+                        שגיאה בטעינת פרויקטים: {error}
+                    </Typography>
+                )}
 
                 {/* Projects Grid */}
                 {userProjects.length > 0 ? (
