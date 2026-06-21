@@ -89,6 +89,7 @@ export default function TaskItem({ open, onClose, taskToEdit }) {
         <Dialog
             open={open}
             onClose={onClose}
+            disableEnforceFocus
             fullWidth
             maxWidth="sm"
             PaperProps={{

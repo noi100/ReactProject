@@ -111,6 +111,7 @@ export default function AddProject({ open: propOpen, onClose, onAddProject }) {
             open={isOpen}
             onClose={handleInternalClose}
             TransitionComponent={Transition}
+            disableEnforceFocus
             PaperProps={{
                 sx: {
                     bgcolor: 'var(--bg-base)',

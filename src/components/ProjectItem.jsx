@@ -363,6 +363,7 @@ export default function ProjectItem() {
             <Dialog
                 open={deleteDialogOpen}
                 onClose={() => setDeleteDialogOpen(false)}
+                disableEnforceFocus
                 PaperProps={{
                     sx: {
                         bgcolor: 'var(--bg-surface)',
